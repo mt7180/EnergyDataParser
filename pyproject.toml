@@ -1,0 +1,10 @@
+[project]
+name = "energy-data-collector"
+version = "0.1.0"
+description = "A parser designed to fetch energy data from different APIs and provide dataframes of consistent structure"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "pandas>=2.2.3",
+    "requests>=2.32.3",
+]
