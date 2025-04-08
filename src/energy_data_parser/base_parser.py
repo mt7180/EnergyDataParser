@@ -53,9 +53,6 @@ class _EnergyAPIBaseParser(ABC):
             return dict()
         
         return response.json()
-    
-
-
 
 
     def fetch_all_data(self, country: str, start_date: str, end_date: str):
@@ -63,7 +60,7 @@ class _EnergyAPIBaseParser(ABC):
         energy_data = {}
        
         for method_name in self.__class__.__abstractmethods__:
-            if "fetch" not in method_name:
+            if not "fetch" in method_name:
                 continue
             elif not hasattr(self, method_name):
                 raise NotImplementedError(f"{method_name} not implemented in {self.__class__.__name__}")

@@ -37,6 +37,9 @@ class EnergyChartsParser(_EnergyAPIBaseParser):
         )
       
     def format_date(self, date:str|pd.Timestamp)->str:
+        if not isinstance(date, (str, pd.Timestamp)):
+            raise TypeError("date must be a string or pd.Timestamp")
+        
         if isinstance(date, str):
             try:
                 date = pd.Timestamp(date)
@@ -55,7 +58,7 @@ class EnergyChartsParser(_EnergyAPIBaseParser):
             "start": self.format_date(start_date),
             "end": self.format_date(end_date)
         }
-        response = EnergyChartsParser.query_API(
+        response = self.query_API(
             self.APIEndPoint.GENERATION.value, 
             params
         )
