@@ -8,6 +8,7 @@ from energy_data_parser.energy_charts import EnergyChartsParser, Country
 def parser():
     return EnergyChartsParser()
 
+
 @pytest.fixture
 def mocked_parser(mocker):
     parser = EnergyChartsParser()
@@ -29,8 +30,8 @@ def mocked_parser(mocker):
 def test_parser_initialization(parser):
     assert isinstance(parser, EnergyChartsParser)
 
-def test_fetch_generation_with_mocked_api(mocked_parser, mocker):
 
+def test_fetch_generation_with_mocked_api(mocked_parser, mocker):
     country = Country.GERMANY
     start_date = pd.Timestamp("2023-01-01")
     end_date = pd.Timestamp("2023-12-31")
@@ -45,7 +46,7 @@ def test_fetch_generation_with_mocked_api(mocked_parser, mocker):
             "end": "2023-12-31",
         },
     )
-    
+
     assert isinstance(df, pd.DataFrame)
     assert not df.empty
     assert df.shape == (2, 2)
