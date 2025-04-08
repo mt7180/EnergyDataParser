@@ -53,16 +53,3 @@ class _EnergyAPIBaseParser(ABC):
             return dict()
         
         return response.json()
-
-
-    def fetch_all_data(self, country: str, start_date: str, end_date: str):
-        """Fetch all types of energy data from a specific API for a given country and date range."""
-        energy_data = {}
-       
-        for method_name in self.__class__.__abstractmethods__:
-            if not "fetch" in method_name:
-                continue
-            elif not hasattr(self, method_name):
-                raise NotImplementedError(f"{method_name} not implemented in {self.__class__.__name__}")
-            energy_data[method_name] = getattr(self.__class__)
-        return energy_data
