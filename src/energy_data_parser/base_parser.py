@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from enum import Enum
-from typing import TypeVar
+from typing import TypeVar, Generic
 from logging import getLogger
 import pandas as pd
 import requests
@@ -8,11 +8,11 @@ from typing import Any
 
 CountryType = TypeVar('CountryType', bound=Enum)
 
-class _EnergyAPIBaseParser(ABC):
+class _EnergyAPIBaseParser(ABC, Generic[CountryType]):
     """Abstract Base Class for fetching data from a specific energy data API."""
     REQUEST_URL = ""
 
-    def __init__(self, api_key=None):
+    def __init__(self, api_key: str|None =None):
         self.api_key = api_key
 
     @abstractmethod
@@ -29,7 +29,7 @@ class _EnergyAPIBaseParser(ABC):
 
 
     @abstractmethod
-    def format_date(self, input_date)->str:
+    def format_date(self, input_date:str|pd.Timestamp)->str:
         pass
 
     @abstractmethod
@@ -37,13 +37,13 @@ class _EnergyAPIBaseParser(ABC):
         pass
 
     
-    @staticmethod
+    @classmethod
     @abstractmethod
-    def get_country(country: str) -> CountryType:
+    def get_country(cls, country: str) -> CountryType:
         pass
 
     @classmethod
-    def query_API(cls, api_end_point, params) ->dict:
+    def query_API(cls, api_end_point:str, params:dict[str, str]) ->dict:
         print(f"Querying API: {cls.REQUEST_URL+api_end_point} with params: {params}")
         response = requests.get(url=cls.REQUEST_URL+api_end_point, params=params)
 

@@ -22,7 +22,7 @@ class EnergyChartsParser(_EnergyAPIBaseParser):
         TOTAL_POWER = "/total_power"
         INSTALLED_POWER = "/installed_power"
 
-    def __init__(self, api_key=None):
+    def __init__(self, api_key: str| None =None):
         self.time_zone="Europe/Brussels"
         self.country_code = EnergyChartsParser.get_country(DEFAULT_COUNTRY)
         super().__init__(api_key)
@@ -78,12 +78,12 @@ class EnergyChartsParser(_EnergyAPIBaseParser):
                 data["unix_seconds"], unit="s", utc=True)
             ) #.tz_localize(TIME_ZONE)  
         elif "time" in data.keys():
-            index = pd.DatetimeIndex(data["time"], unit="y", utc=True)
+            index = pd.DatetimeIndex(data["time"])
         else:
             raise ValueError("No time information found in data")
         return index
         
-    def add_columns(self, df: pd.DataFrame, data: dict[str,Any]):
+    def add_columns(self, df: pd.DataFrame, data: dict[str,Any]) -> pd.DataFrame:
         if "forecast_values" in data.keys():
             production_type = data["production_type"]
             df[production_type] = data["forecast_values"]
@@ -99,7 +99,7 @@ class EnergyChartsParser(_EnergyAPIBaseParser):
                 df[column["name"]] = column["data"]
         return df
     
-    def make_dataframe(self, data: dict[str,Any]):
+    def make_dataframe(self, data: dict[str,Any]) -> pd.DataFrame:
         if not data:
             raise ValueError("data empty, no dataframe can be created")
 
