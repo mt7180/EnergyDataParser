@@ -31,6 +31,8 @@ class EnergyChartsParser(_EnergyAPIBaseParser):
 
     @staticmethod
     def get_country(country: str) -> "Country":
+        if not isinstance(country, str):
+            raise TypeError("country must be a string")
         for member in Country:
             if member.name == country.upper():
                 return member
