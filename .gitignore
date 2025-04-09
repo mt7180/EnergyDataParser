@@ -11,3 +11,4 @@ misc.*
 
 # Virtual environments
 .venv
+venv/
