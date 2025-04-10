@@ -46,8 +46,10 @@ class _EnergyAPIBaseParser(ABC, Generic[CountryType]):
 
     @classmethod
     def query_API(cls, api_end_point: str, params: dict[str, str]) -> dict:
-        print(f"Querying API: {cls.REQUEST_URL + api_end_point} with params: {params}")
-        response = requests.get(url=cls.REQUEST_URL + api_end_point, params=params)
+        url = cls.REQUEST_URL + api_end_point
+        print(f"Querying API: {url} with params: {params}")
+        
+        response = requests.get(url, params=params)
 
         if response.status_code != 200:
             logger = getLogger(__name__)

@@ -60,7 +60,7 @@ def test_fetch_data(parser):
     start_date = pd.Timestamp("2023-01-01")
     end_date = pd.Timestamp("2023-12-31")
 
-    df = parser.fetch_data(country, "generation", start_date, end_date)
+    df = parser.fetch_data(country, parser.get_endpoint("generation"), start_date, end_date)
 
     assert isinstance(df, pd.DataFrame)
     assert not df.empty
@@ -147,7 +147,7 @@ def test_get_country(parser):
 
 def test_get_country_wrong_country_type(parser):
     with pytest.raises(TypeError):
-        parser.get_country(Country.GERMANY)  # type: ignore
+        parser.get_country(123)  # type: ignore
 
 def test_format_date(parser):
     date_str = "2023-01-01"
