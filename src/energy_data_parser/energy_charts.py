@@ -15,7 +15,7 @@ class CountryNotYetImplementedError(Exception):
     pass
 
 
-class EnergyChartsParser(_EnergyAPIBaseParser):
+class EnergyChartsParser(_EnergyAPIBaseParser[Any]):
     """Class for fetching data from Energy Charts API"""
 
     REQUEST_URL = "https://api.energy-charts.info"
@@ -42,7 +42,7 @@ class EnergyChartsParser(_EnergyAPIBaseParser):
         raise CountryNotYetImplementedError(
             f"Country '{country}' not available at Energy Charts API"
         )
-    
+
     @staticmethod
     def get_endpoint(endpoint: str) -> "APIEndPoint":
         """Get the endpoint for the Energy Charts API from a string"""
@@ -55,7 +55,6 @@ class EnergyChartsParser(_EnergyAPIBaseParser):
                 return member
         raise ValueError(f"Endpoint '{endpoint}' not available in Energy Charts API")
 
-
     def format_date(self, date: str | pd.Timestamp) -> str:
         if not isinstance(date, (str, pd.Timestamp)):
             raise TypeError("date must be a string or pd.Timestamp")
@@ -66,7 +65,7 @@ class EnergyChartsParser(_EnergyAPIBaseParser):
             except ValueError:
                 raise ValueError(f"Invalid date format: {date}")
         return date.strftime("%Y-%m-%d")
-    
+
     def fetch_data(
         self,
         country: "Country",
@@ -78,7 +77,7 @@ class EnergyChartsParser(_EnergyAPIBaseParser):
         if start_date and end_date:
             params["start"] = self.format_date(start_date)
             params["end"] = self.format_date(end_date)
-        
+
         response = self.query_API(endpoint.value, params)
 
         if not response:
@@ -86,7 +85,7 @@ class EnergyChartsParser(_EnergyAPIBaseParser):
         df = self.make_dataframe(response)
         logger.debug(f"{df.head(3)},{len(df.columns)}")
         return df
-    
+
     async def async_fetch_data(
         self,
         session: aiohttp.ClientSession,
@@ -99,7 +98,7 @@ class EnergyChartsParser(_EnergyAPIBaseParser):
         if start_date and end_date:
             params["start"] = self.format_date(start_date)
             params["end"] = self.format_date(end_date)
-        
+
         data = await self.async_query_API(session, endpoint.value, params)
 
         if not data:
@@ -107,20 +106,19 @@ class EnergyChartsParser(_EnergyAPIBaseParser):
         df = self.make_dataframe(data)
         logger.debug(f"{df.head(3)},{len(df.columns)}")
         return df
-    
-    def fetch_installed_power(
-        self, 
-        country: "Country"
-    ) -> pd.DataFrame:
+
+    def fetch_installed_power(self, country: "Country") -> pd.DataFrame:
         return self.fetch_data(country, self.get_endpoint("installed_power"))
-    
+
     def fetch_total_power(
-        self, 
+        self,
         country: "Country",
-        start_date: str | pd.Timestamp, 
-        end_date: str | pd.Timestamp
+        start_date: str | pd.Timestamp,
+        end_date: str | pd.Timestamp,
     ) -> pd.DataFrame:
-        return self.fetch_data(country, self.get_endpoint("total_power"), start_date, end_date )
+        return self.fetch_data(
+            country, self.get_endpoint("total_power"), start_date, end_date
+        )
 
     def fetch_generation(
         self,
@@ -128,8 +126,10 @@ class EnergyChartsParser(_EnergyAPIBaseParser):
         start_date: str | pd.Timestamp,
         end_date: str | pd.Timestamp,
     ) -> pd.DataFrame:
-        return self.fetch_data(country, self.get_endpoint("generation"), start_date, end_date)
-    
+        return self.fetch_data(
+            country, self.get_endpoint("generation"), start_date, end_date
+        )
+
     def create_time_index(self, data: dict[str, Any]) -> pd.DatetimeIndex:
         if "unix_seconds" in data.keys():
             index = pd.DatetimeIndex(

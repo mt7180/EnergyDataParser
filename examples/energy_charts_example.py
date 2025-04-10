@@ -1,11 +1,11 @@
-from energy_data_parser.energy_charts import EnergyChartsParser, Country
+from energy_data_parser.energy_charts import EnergyChartsParser
 
 parser = EnergyChartsParser()
 
 
 def fetch_all(country_str, start_date, end_date):
     """Fetch all data for a specific country and date range."""
-    
+
     data = {}
 
     country = EnergyChartsParser.get_country(country_str)
@@ -23,8 +23,8 @@ def fetch_all(country_str, start_date, end_date):
 
 if __name__ == "__main__":
     print("Energy Charts Example")
-    start_date="2023-01-01"
-    end_date="2023-12-31"
+    start_date = "2023-01-01"
+    end_date = "2023-12-31"
     data = fetch_all("germany", start_date, end_date)
     for name, df in data.items():
         print(f"-------{name}-----")
