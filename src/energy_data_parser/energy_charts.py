@@ -1,4 +1,5 @@
 from enum import Enum
+import aiohttp
 from logging import getLogger
 import pandas as pd
 from typing import Any
@@ -83,6 +84,27 @@ class EnergyChartsParser(_EnergyAPIBaseParser):
         if not response:
             return pd.DataFrame()
         df = self.make_dataframe(response)
+        logger.debug(f"{df.head(3)},{len(df.columns)}")
+        return df
+    
+    async def async_fetch_data(
+        self,
+        session: aiohttp.ClientSession,
+        country: "Country",
+        endpoint: "EnergyChartsParser.APIEndPoint",
+        start_date: None | str | pd.Timestamp = None,
+        end_date: None | str | pd.Timestamp = None,
+    ) -> pd.DataFrame:
+        params = {"country": country.value}
+        if start_date and end_date:
+            params["start"] = self.format_date(start_date)
+            params["end"] = self.format_date(end_date)
+        
+        data = await self.async_query_API(session, endpoint.value, params)
+
+        if not data:
+            return pd.DataFrame()
+        df = self.make_dataframe(data)
         logger.debug(f"{df.head(3)},{len(df.columns)}")
         return df
     

@@ -5,6 +5,8 @@ from logging import getLogger
 import pandas as pd
 import requests
 from typing import Any
+import aiohttp
+import asyncio
 
 CountryType = TypeVar("CountryType", bound=Enum)
 
@@ -59,3 +61,18 @@ class _EnergyAPIBaseParser(ABC, Generic[CountryType]):
             return dict()
 
         return response.json()
+    
+    @classmethod
+    async def async_query_API(cls, session, api_end_point: str, params: dict[str, str]) -> dict:
+
+        url = cls.REQUEST_URL + api_end_point
+        async with session.get(url, params=params) as response:
+            json_body = await response.json()
+            if response.status != 200:
+                logger = getLogger(__name__)
+                logger.error(
+                    f"Request failed with status code {response.status}:{json_body}"
+                )
+                return dict()
+            return json_body
+            
